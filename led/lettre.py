@@ -1,0 +1,20 @@
+from sense_hat import SenseHat
+sense = SenseHat()
+import time
+
+sense.show_letter("P")
+time.sleep(0.6)
+sense.show_letter("r")
+time.sleep(0.6)
+sense.show_letter("o")
+time.sleep(0.6)
+sense.show_letter("T")
+time.sleep(0.6)
+sense.show_letter("e")
+time.sleep(0.6)
+sense.show_letter("c")
+time.sleep(0.6)
+sense.show_letter("h")
+time.sleep(0.6)
+sense.clear()
+time.sleep(0.6)
