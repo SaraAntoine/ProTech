@@ -6,6 +6,17 @@
 #include <string.h>
 #define MAX 300
 
+
+
+
+
+// How to compile : gcc get.c -lcurl -ljson-c
+
+// Lien du github utilisé 
+// https://github.com/DaveGamble/cJSON#including-cjson 
+
+#include <json-c/json.h>
+
 /*
  * Function : 
  *
@@ -148,6 +159,35 @@ void getRoad(double doubleLatitude, double doubleLongitude,char *villeDestinatio
   fclose(fptr);
 
 
+
+    struct json_object *obj = json_tokener_parse(s.ptr);
+    if (!obj) { fputs("json_tokener_parse failed\n", stderr); return; }
+
+    struct json_object *way = json_object_object_get(obj, "geocoded_waypoints");
+    if (!way) { fputs("no geocoded_waypoints\n", stderr); return; }
+
+    size_t len = json_object_array_length(way);
+    printf("There are %zd waypoints.\n", len);
+    for (size_t idx = 0; idx < len; ++idx)
+    {   printf("waypoint %zd:\n", idx);
+        struct json_object *point = json_object_array_get_idx(way, idx);
+        printf("geocoder_status is %s\n", json_object_get_string(json_object_object_get(point, "geocoder_status")));
+        printf("place_id is %s\n",        json_object_get_string(json_object_object_get(point, "place_id")));
+        printf("types is %s\n",           json_object_get_string(json_object_object_get(point, "types")));
+    }
+
+    struct json_object *routes = json_object_object_get(obj, "routes");
+    if (!routes) { fputs("no routes\n", stderr); return; }
+
+    size_t routeslen = json_object_array_length(routes);
+    printf("There are %zd routes.\n", routeslen);
+    for (size_t idx = 0; idx < routeslen; ++idx)
+    {   printf("route %zd:\n", idx);
+        struct json_object *route = json_object_array_get_idx(routes, idx);
+        printf("bounds is %s\n", json_object_get_string(json_object_object_get(route, "bounds")));
+    }
+
+
   //printf("%s\n",curl_easy_perform(curl));//DEBUG
   if(res != CURLE_OK)
       fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
@@ -204,7 +244,7 @@ void getRoad(double doubleLatitude, double doubleLongitude,char *villeDestinatio
 int main(void){
   
   //getCoordinate();
-  getRoad(50.23,20.200,"paris");
+  getRoad(50.642782,2.833267,"nieppe");
 
 
 
