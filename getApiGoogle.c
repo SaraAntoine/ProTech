@@ -179,13 +179,45 @@ void getRoad(double doubleLatitude, double doubleLongitude,char *villeDestinatio
     struct json_object *routes = json_object_object_get(obj, "routes");
     if (!routes) { fputs("no routes\n", stderr); return; }
 
+
+    struct json_object *distance ;
+    struct json_object *steps;
+
     size_t routeslen = json_object_array_length(routes);
     printf("There are %zd routes.\n", routeslen);
-    for (size_t idx = 0; idx < routeslen; ++idx)
-    {   printf("route %zd:\n", idx);
+    for (size_t idx = 0; idx < routeslen; ++idx){
+        printf("route %zd:\n", idx);
         struct json_object *route = json_object_array_get_idx(routes, idx);
         printf("bounds is %s\n", json_object_get_string(json_object_object_get(route, "bounds")));
+        
+        //printf("legs is %s\n", json_object_get_string(json_object_object_get(route, "legs")));
+        struct json_object *legs = json_object_object_get(route, "legs");
+        size_t legslen = json_object_array_length(legs);
+        printf("thera are %zd legs \n",legslen );
+
+        for (size_t idy = 0; idy < legslen; ++idy){
+            //printf("legs %zd:\n", idy);
+            struct json_object *distance = json_object_array_get_idx(legs, idx);
+            printf("Object Distance is %s\n", json_object_get_string(json_object_object_get(distance, "distance")));
+              
+            struct json_object *duration = json_object_array_get_idx(legs, idx);
+            printf("Object duration is %s\n", json_object_get_string(json_object_object_get(duration, "duration")));
+
+            struct json_object *end_location = json_object_array_get_idx(legs, idx);
+            printf("Object end_location is %s\n", json_object_get_string(json_object_object_get(end_location, "end_location")));
+
+            struct json_object *steps = json_object_array_get_idx(legs, idx);
+            //printf("Object steps is %s\n", json_object_get_string(json_object_object_get(steps, "steps")));
+
+        } 
     }
+
+    size_t stepslen = json_object_array_length(steps);
+
+
+
+
+
 
 
   //printf("%s\n",curl_easy_perform(curl));//DEBUG
