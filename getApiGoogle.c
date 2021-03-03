@@ -183,6 +183,8 @@ void getRoad(double doubleLatitude, double doubleLongitude,char *villeDestinatio
     struct json_object *distance ;
     struct json_object *steps;
 
+
+
     size_t routeslen = json_object_array_length(routes);
     printf("There are %zd routes.\n", routeslen);
     for (size_t idx = 0; idx < routeslen; ++idx){
@@ -206,13 +208,61 @@ void getRoad(double doubleLatitude, double doubleLongitude,char *villeDestinatio
             struct json_object *end_location = json_object_array_get_idx(legs, idx);
             printf("Object end_location is %s\n", json_object_get_string(json_object_object_get(end_location, "end_location")));
 
-            struct json_object *steps = json_object_array_get_idx(legs, idx);
+
+            //struct json_object *steps = json_object_array_get_idx(legs, idx);
             //printf("Object steps is %s\n", json_object_get_string(json_object_object_get(steps, "steps")));
+            struct json_object *leg = json_object_array_get_idx(legs, idx);
+            struct json_object *steps = json_object_object_get(leg, "steps");
+            size_t stepslen = json_object_array_length(steps);
+            printf("thera are %zd steps \n",stepslen );
+            // Browse steps ! 
+            for (size_t idz = 0; idz < stepslen; ++idz){
+                
+                printf("steps %zd:\n", idz);
 
-        } 
+                // Fill new struct table(s) 
+
+                struct json_object *distance = json_object_array_get_idx(steps, idz);
+                printf("Object stepsDistance is %s\n", json_object_get_string(json_object_object_get(distance, "distance")));
+                struct json_object *obj = json_tokener_parse(json_object_get_string(json_object_object_get(distance, "distance")));
+                printf("distance text is %s\n",           json_object_get_string(json_object_object_get(obj, "text")));
+
+
+                // maneuver to speech to text 
+                struct json_object *maneuver = json_object_array_get_idx(steps, idz);
+                if(json_object_get_string(json_object_object_get(maneuver, "maneuver"))!=NULL)
+                printf("Object maneuver is %s\n", json_object_get_string(json_object_object_get(maneuver, "maneuver")));
+                
+                // start lat/lng calculation
+                struct json_object *start_location = json_object_array_get_idx(steps, idz);
+                printf("Object start_location is %s\n", json_object_get_string(json_object_object_get(start_location, "start_location")));
+                
+                    // lat 
+                    obj = json_tokener_parse(json_object_get_string(json_object_object_get(start_location, "start_location")));
+                    printf("lat start_location is %s\n",           json_object_get_string(json_object_object_get(obj, "lat")));
+                    // lng
+                    obj = json_tokener_parse(json_object_get_string(json_object_object_get(start_location, "start_location")));
+                    printf("lng start_location is %s\n",           json_object_get_string(json_object_object_get(obj, "lng")));
+
+
+                // end lat/lng calculation
+                struct json_object *end_location = json_object_array_get_idx(steps, idz);
+                printf("Object end_location is %s\n", json_object_get_string(json_object_object_get(end_location, "end_location")));  
+
+                    // lat 
+                    obj = json_tokener_parse(json_object_get_string(json_object_object_get(end_location, "end_location")));
+                    printf("lat end_location is %s\n",           json_object_get_string(json_object_object_get(obj, "lat")));
+                    // lng
+                    obj = json_tokener_parse(json_object_get_string(json_object_object_get(end_location, "end_location")));
+                    printf("lng end_location is %s\n\n",           json_object_get_string(json_object_object_get(obj, "lng")));
+
+
+            }
+
+
+        }
+        
     }
-
-    size_t stepslen = json_object_array_length(steps);
 
 
 
