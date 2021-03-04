@@ -6,14 +6,13 @@
 #include <string.h>
 #define MAX 300
 
+#include <gps.h>
+#include <unistd.h>
+#include <math.h>
+#include <errno.h>
 
 
-
-
-// How to compile : gcc get.c -lcurl -ljson-c 
-
-//gcc -o gps gps.c -lm -lgps 
-
+// How to compile :  gcc master.c -lcurl -ljson-c -lm -lgps 
 
 // Lien du github utilisé 
 // https://github.com/DaveGamble/cJSON#including-cjson 
@@ -34,7 +33,6 @@ struct string {
 };
 
 
-struct gps_data_t gps_data;
 
 
 
@@ -312,7 +310,13 @@ void getRoad(double doubleLatitude, double doubleLongitude,char *villeDestinatio
  * 
  */
   void getCoordinate(){
-
+    
+    struct gps_data_t gps_data;
+  sleep(3);
+  if ((gps_open(GPSD_SHARED_MEMORY, NULL, &gps_data)) == -1) {
+  printf("code: %d, reason: %s\n", errno, gps_errstr(errno));
+  return EXIT_FAILURE;
+  }
       if ((gps_read(&gps_data)) == -1) {
           printf("error occured reading gps data. code: %d, reason: %s\n", errno, gps_errstr(errno));
       } else {
@@ -328,8 +332,8 @@ void getRoad(double doubleLatitude, double doubleLongitude,char *villeDestinatio
 
 
         }
-
-
+        gps_close (&gps_data);
+}
 
   // Documentation : https://developers.google.com/maps/documentation/directions/get-directions?hl=fr
 
